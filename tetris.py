@@ -22,7 +22,7 @@ import time
 import pygame
 import sys
 
-
+# Paramètres du jeux
 TAILLE_FENETRE = 640, 480
 DIM_PLATEAU = 10, 20
 BORDURE_PLATEAU = 4
@@ -35,14 +35,18 @@ MARGE = tuple([TAILLE_FENETRE[i]-TAILLE_PLATEAU[i]- BORDURE_PLATEAU*2 for i in r
 START_PLATEAU = int(MARGE[0]/2), MARGE[1]+2*BORDURE_PLATEAU
 START_PLABORD = int(MARGE[0]/2)-BORDURE_PLATEAU, MARGE[1]+BORDURE_PLATEAU
 
+# Calcul du centre de la fenêtre par rapport a la taille actuelle
 CENTRE_FENETRE = tuple([TAILLE_FENETRE[i]/2 for i in range(2)])
 POS = CENTRE_FENETRE[0], CENTRE_FENETRE[1]+100
+
+# Position des différetns textes a droite du plateau
 POSITION_SCORE = TAILLE_FENETRE[0] - START_PLABORD[0] / 2, 120
 POSITION_PIECES = POSITION_SCORE[0], 150
 POSITION_LIGNES = POSITION_SCORE[0], 180
 POSITION_TETRIS = POSITION_SCORE[0], 210
 POSITION_NIVEAU = POSITION_SCORE[0], 240
 
+# Pièces du jeux Tétris sous forme de dico
 PIECES = {
 	'O': [
 		'0000\n0110\n0110\n0000',
@@ -81,6 +85,7 @@ PIECES = {
 for name, rotations in PIECES.items():
 	PIECES[name] = [[[int(i) for i in p] for p in r.splitlines()] for r in rotations]
 
+# Couleurs des pièces
 COULEURS = {
 	0: (0, 0, 0),
 	1: (255, 255, 0),
@@ -94,6 +99,7 @@ COULEURS = {
 	9: (255, 255, 255),
 }
 
+# Liste du "nom" (keys) des pièces récupérer depuis le dico PIECES
 PIECES_KEYS = list(PIECES.keys())
 
 # Classe Tetris
@@ -110,25 +116,30 @@ class Jeu:
 			'titre': pygame.font.Font('freesansbold.ttf', 100),
 		}
 		pygame.display.set_caption('Application Tetris')
-
+  
+	# Affiche la page pour lancer le jeux, "Page d'acceuil"
 	def start(self):
 		self._afficherTexte('Tetris', CENTRE_FENETRE, font = 'titre')
 		self._afficherTexte('Appuyer sur une touche...', POS)
 		self._attente()
 
+	# Affiche la page quand le joueur a perdu la partie
 	def stop(self):
 		self._afficherTexte('Perdu', CENTRE_FENETRE, font='titre')
 		self._attente()
 		self._quitter()
 
+	# Permet d'afficher le texte en paramètre a une certaine position
 	def _afficherTexte(self, text, position, couleur=9, font='defaut'):
-#		print("Afficher Texte")
+		print("Afficher Texte")
 		font = self.fonts.get(font, self.fonts['defaut'])
 		couleur=COULEURS.get(couleur, COULEURS[9])
 		rendu = font.render(text, True, couleur)
 		rect = rendu.get_rect()
 		rect.center = position
 		self.surface.blit(rendu, rect)
+  
+	# Permet de récuperer l'event de l'utilisateur
 	def _getEvent(self):
 		for event in pygame.event.get():
 			if event.type == QUIT:
@@ -140,26 +151,33 @@ class Jeu:
 				if event.key == K_ESCAPE:
 					continue
 				return event.key
-				
+
+	# Quitte "et" ferme le jeux 			
 	def _quitter(self):
 		print("Quitter")
 		pygame.quit()
 		sys.exit()
+  
+	# Refresh l'affichage de la page
 	def _rendre(self):
 		pygame.display.update()
 		self.clock.tick()
+	# Met en pause le jeux
 	def _attente(self):
 		print("Attente")
 		while self._getEvent() == None:
 			self._rendre()
+   # Retourne la pièce courante
 	def _getPiece(self):
 		return PIECES.get(random.choice(PIECES_KEYS))
+	# Retourne la couleur de la pièce courante
 	def _getCurrentPieceColor(self):
 		for l in self.current[0]:
 			for c in l:
 				if c != 0:
 					return c
 		return 0
+	# Calcul le nombre de pièce actuellement posée
 	def _calculerDonneesPieceCourante(self):
 		m=self.current[self.position[2]]
 		coords = []
@@ -168,6 +186,9 @@ class Jeu:
 				if k != 0:
 					coords.append([i+self.position[0], j+self.position[1]])
 		self.coordonnees = coords
+  
+	# Vérifie si l'évènements est possible, 
+ 	# ex : touche de rotation -> vérifie si la pièce n'est pas coller a un mur du plateur
 	def _estValide(self, x=0, y=0, r=0):
 		max_x, max_y = DIM_PLATEAU
 		if r == 0:
@@ -196,11 +217,14 @@ class Jeu:
 					return False
 #		print("Position testée valide: x=%s, y=%s" % (x, y))
 		return True
+
+	# Pose la pièce sur le plateur, elle ne peut plus être déplacer, 
+ 	# et met a jour les valeurs de score, et vérifie si il n'y a pas une ligne complète
 	def _poserPiece(self):
 		print("La pièce est posée")
 		if self.position[1] <= 0:
 			self.perdu = True
-		# Ajout de la pièce parmi le plateau
+		# Ajout de la pièce parmis le plateau
 		couleur = self._getCurrentPieceColor()
 		for cx, cy in self.coordonnees:
 			self.plateau[cy][cx] = couleur
@@ -228,10 +252,14 @@ class Jeu:
 			self.score += self.niveau * self.tetris
 		# Travail avec la pièce courante terminé
 		self.current = None
+  
+	# Initialise les données lors du lancement de la partie
 	def _first(self):
 		self.plateau = [[0] * DIM_PLATEAU[0] for i in range(DIM_PLATEAU[1])]
 		self.score, self.pieces, self.lignes, self.tetris, self.niveau = 0, 0, 0, 0, 1
 		self.current, self.next, self.perdu = None, self._getPiece(), False
+  
+	# Fait apparaitre la pièce suivante quand l'ancienne est posée
 	def _next(self):
 		print("Piece suivante")
 		self.current, self.next = self.next, self._getPiece()
@@ -239,30 +267,38 @@ class Jeu:
 		self.position = [int(DIM_PLATEAU[0] / 2)-2, -4, 0]
 		self._calculerDonneesPieceCourante()
 		self.dernier_mouvement = self.derniere_chute = time.time()
+  
+	# Fonction qui permet de gérer les évènements du joueur
 	def _gererEvenements(self):
 		event = self._getEvent()
+		# Touche "P", met en pause le jeux
 		if event == K_p:
 			print("Pause")
 			self.surface.fill(COULEURS.get(0))
 			self._afficherTexte('Pause', CENTRE_FENETRE, font='titre')
 			self._afficherTexte('Appuyer sur une touche...', POS)
 			self._attente()
+		# Flèche gauche
 		elif event == K_LEFT:
 			print("Mouvement vers la gauche")
 			if self._estValide(x=-1):
 				self.position[0] -= 1
+    	# Flèche droite
 		elif event == K_RIGHT:
 			print("Mouvement vers la droite")
 			if self._estValide(x=1):
 				self.position[0] += 1
+    	# Flèche bas
 		elif event == K_DOWN:
 			print("Mouvement vers le bas")
 			if self._estValide(y=1):
 				self.position[1] += 1
+    	# Flèche haut
 		elif event == K_UP:
 			print("Mouvement de rotation")
 			if self._estValide(r=1):
 				self.position[2] = (self.position[2] + 1) %len(self.current)
+		# Touche espace
 		elif event == K_SPACE:
 			print("Mouvement de chute %s / %s" % (self.position, self.coordonnees))
 			if self.position[1] <=0:
@@ -273,6 +309,8 @@ class Jeu:
 				a+=1
 			self.position[1] += a-1
 		self._calculerDonneesPieceCourante()
+  
+  	# Permet de gérer la déscente de la pièce 
 	def _gererGravite(self):
 		if time.time() - self.derniere_chute > 0.35:
 			self.derniere_chute = time.time()
@@ -288,6 +326,8 @@ class Jeu:
 				print("On déplace vers le bas")
 				self.position[1] += 1
 				self._calculerDonneesPieceCourante()
+    
+	# Déssine le plateau de jeux
 	def _dessinerPlateau(self):
 		self.surface.fill(COULEURS.get(0))
 		pygame.draw.rect(self.surface, COULEURS[8], START_PLABORD+TAILLE_PLABORD, BORDURE_PLATEAU)
@@ -310,6 +350,8 @@ class Jeu:
 		self._afficherTexte('Niveau: %s' % self.niveau, POSITION_NIVEAU)
 
 		self._rendre()
+  
+	# Lance la partie, continue tant que ce n'est pas perdu 
 	def play(self):
 		print("Jouer")
 		self.surface.fill(COULEURS.get(0))
