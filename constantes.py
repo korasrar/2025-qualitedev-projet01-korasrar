@@ -1,3 +1,6 @@
+from pygame.locals import *
+import pygame
+
 # Constantes de l'application
 
 TAILLE_FENETRE = 640, 480
@@ -19,6 +22,19 @@ POSITION_PIECES = POSITION_SCORE[0], 150
 POSITION_LIGNES = POSITION_SCORE[0], 180
 POSITION_TETRIS = POSITION_SCORE[0], 210
 POSITION_NIVEAU = POSITION_SCORE[0], 240
+
+# Ajout des "nombres magiques"
+APP_NAME = "Tetris"
+GRAVITE = 0.35
+NIVEAU = 1
+SCORE_START = 0
+#Touches de mouvement
+KEY_LEFT = K_LEFT
+KEY_RIGHT = K_RIGHT
+KEY_DOWN = K_DOWN
+KEY_UP = K_UP
+KEY_INSTANT_DOWN = K_SPACE
+KEY_PAUSE = K_p
 
 PIECES = {
 	'O': [
