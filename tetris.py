@@ -24,10 +24,9 @@ import sys
 
 from constantes import *
 
-
 # Classe Tetris
 class Jeu:
-    """
+  """
 	La classe du jeu Tetris avec ces méthodes pour faire fonctionner le jeux
 
 	Args:
@@ -86,7 +85,7 @@ class Jeu:
         """Récupère l'entrer de l'utilisateur
 
 		Returns:
-			random.Any | None: Entrée clavier de l'utilisateur
+			None: Entrée clavier de l'utilisateur
 		"""
         for event in pygame.event.get():
             if event.type == QUIT:
