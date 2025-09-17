@@ -1,19 +1,19 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-
 """
 [Ce bloc est la documentation du module]
 Un Tetris avec Pygame.
-Ce code est basee sur le code de Sébastien CHAZALLET, auteur du livre "Python 3, les fondamentaux du language"
+Ce code est basee sur le code de Sébastien CHAZALLET,
+auteur du livre 'Python 3, les fondamentaux du language'
 """
 
-__author__ = "votre nom"
-__copyright__ = "Copyright 2022"
-__credits__ = ["Sébastien CHAZALLET", "Vincent NGUYEN", "votre nom"]
-__license__ = "GPL"
-__version__ = "1.0"
-__maintainer__ = "votre nom"
-__email__ = "votre email"
+__author__ = 'votre nom'
+__copyright__ = 'Copyright 2022'
+__credits__ = ['Sébastien CHAZALLET', 'Vincent NGUYEN', 'votre nom']
+__license__ = 'GPL'
+__version__ = '1.0'
+__maintainer__ = 'votre nom'
+__email__ = 'votre email'
 
 # Probleme de l'ordre des imports
 from pygame.locals import *
@@ -21,7 +21,9 @@ import random
 import time
 import pygame
 import sys
+
 from constantes import *
+
 
 # Classe Tetris
 class Jeu:
@@ -313,7 +315,7 @@ class Jeu:
 			self._gerer_evenements()
 			self._gerer_gravite()
 			self._dessiner_plateau()
-
+			
 if __name__ == '__main__':
 	j = Jeu()
 	print("Jeu prêt")
@@ -323,4 +325,3 @@ if __name__ == '__main__':
 	print("Partie terminée")
 	j.stop()
 	print("Arrêt du programme")
-
