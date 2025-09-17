@@ -315,13 +315,13 @@ class Jeu:
 			self._gerer_evenements()
 			self._gerer_gravite()
 			self._dessiner_plateau()
-
-    def __init__(self):
-        pygame.init()
-        self.clock = pygame.time.Clock()
-        self.surface = pygame.display.set_mode(TAILLE_FENETRE)
-        self.fonts = {
-            'defaut': pygame.font.Font('freesansbold.ttf', 18),
-            'titre': pygame.font.Font('freesansbold.ttf', 100),
-        }
-        pygame.display.set_caption('Application Tetris')
+			
+if __name__ == '__main__':
+	j = Jeu()
+	print("Jeu prêt")
+	j.start()
+	print("Partie démarée")
+	j.play()
+	print("Partie terminée")
+	j.stop()
+	print("Arrêt du programme")
