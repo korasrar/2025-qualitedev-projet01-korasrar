@@ -159,21 +159,22 @@ class Jeu:
 						coords.append([i+self.position[0], j+self.position[1]])
 			coordonnees = coords
 #			print("Rotation testée: %s" % coordonnees)
-		for cx, cy in coordonnees:
-			if not 0 <= x + cx < max_x:
-#				print("Non valide en X: cx=%s, x=%s" % (cx, x))
-				return False
-			elif cy <0:
-				continue
-			elif y + cy >= max_y:
-#				print("Non valide en Y: cy=%s, y=%s" % (cy, y))
-				return False
-			else:
-				if self.plateau[cy+y][cx+x] != 0:
-#					print("Position occupée sur le plateau")
-					return False
+        for cx, cy in coordonnees:
+            if not 0 <= x + cx < max_x:
+                #				print("Non valide en X: cx=%s, x=%s" % (cx, x))
+                return False
+            elif cy < 0:
+                continue
+            elif y + cy >= max_y:
+                #				print("Non valide en Y: cy=%s, y=%s" % (cy, y))
+                return False
+            else:
+                if self.plateau[cy + y][cx + x] != 0:
+                    #					print("Position occupée sur le plateau")
+                    return False
 #		print("Position testée valide: x=%s, y=%s" % (x, y))
-		return True
+        return True
+
 	def _poser_piece(self) -> None:
 		"""Pose la pièce sur le plateau ( position définitive )
 		"""
