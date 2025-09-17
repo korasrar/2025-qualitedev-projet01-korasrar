@@ -23,8 +23,6 @@ import pygame
 import sys
 
 from constantes import *
-
-
 # Classe Tetris
 class Jeu:
 	"""
@@ -76,7 +74,7 @@ class Jeu:
 		rect = rendu.get_rect()
 		rect.center = position
 		self.surface.blit(rendu, rect)
-	def _get_event(self) -> random.Any | None:
+	def _get_event(self) -> None:
 		"""Récupère l'entrer de l'utilisateur
 
 		Returns:
