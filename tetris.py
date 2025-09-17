@@ -26,9 +26,16 @@ from constantes import *
 # Classe Tetris
 class Jeu:
 	"""
-	[Il manque la documentation de la classe]
+	La classe du jeu Tetris avec ces méthodes pour faire fonctionner le jeux
+
+	Args:
+			clock (Clock): Gère le temps
+			surface (): Gère la taille du plateau par rapport a la taille de la fenêtre
+			fonts (Font): Les fonts de base
 	"""
 	def __init__(self)  -> None:
+		"""Déclaration des variables utiles au jeux Tetris
+		"""
 		pygame.init()
 		self.clock = pygame.time.Clock()
 		self.surface = pygame.display.set_mode(TAILLE_FENETRE)
@@ -39,17 +46,28 @@ class Jeu:
 		pygame.display.set_caption('Application '+APP_NAME)
 
 	def start(self) -> None:
+		"""Lance le jeux
+		"""
 		self._afficher_texte(APP_NAME, CENTRE_FENETRE, font = 'titre')
 		self._afficher_texte('Appuyer sur une touche...', POS)
 		self._attente()
 
 	def stop(self) -> None:
+		"""Stop et ferme le jeux ( fenêtre )
+		"""
 		self._afficher_texte('Perdu', CENTRE_FENETRE, font='titre')
 		self._attente()
 		self._quitter()
 
 	def _afficher_texte(self, text:str, position, couleur:int=9, font:str='defaut') -> None:
-#		print("Afficher Texte")
+		"""Permet d'afficher le texte en paramètre en fonction des paramètres
+
+		Args:
+			text (str): Texte a afficher
+			position (_type_): Position du texte
+			couleur (int, optional): Couleur du texte . Defaults to 9.
+			font (str, optional): Font du texte. Defaults to 'defaut'.
+		"""
 		font = self.fonts.get(font, self.fonts['defaut'])
 		couleur=COULEURS.get(couleur, COULEURS[9])
 		rendu = font.render(text, True, couleur)
@@ -57,6 +75,11 @@ class Jeu:
 		rect.center = position
 		self.surface.blit(rendu, rect)
 	def _get_event(self) -> random.Any | None:
+		"""Récupère l'entrer de l'utilisateur
+
+		Returns:
+			random.Any | None: Entrée clavier de l'utilisateur
+		"""
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				self._quitter()
@@ -69,25 +92,43 @@ class Jeu:
 				return event.key
 				
 	def _quitter(self) -> None:
+		"""Ferme la fenêtre du jeux
+		"""
 		print("Quitter")
 		pygame.quit()
 		sys.exit()
 	def _rendre(self) -> None:
+		"""Met a jour l'affichage de la fenêtre
+		"""
 		pygame.display.update()
 		self.clock.tick()
 	def _attente(self) -> None:
+		"""Met en pause le jeux
+		"""
 		print("Attente")
 		while self._get_event() == None:
 			self._rendre()
 	def _get_piece(self) -> list[str] | None:
+		"""Récupère une pièce parmis la liste des pièces dans les constantes
+
+		Returns:
+			list[str] | None: Une pièce
+		"""
 		return PIECES.get(random.choice(PIECES_KEYS))
 	def _get_current_piece_color(self) -> str:
+		"""Retourne la couleur de la pièce actuelle
+
+		Returns:
+			str: Couleur de la pièce
+		"""
 		for l in self.current[0]:
 			for c in l:
 				if c != 0:
 					return c
 		return 0
 	def _calculer_donnees_piece_courante(self) -> None:
+		"""Calcule les données de la pièce actuelle
+		"""
 		m=self.current[self.position[2]]
 		coords = []
 		for i, l in enumerate(m):
@@ -96,6 +137,16 @@ class Jeu:
 					coords.append([i+self.position[0], j+self.position[1]])
 		self.coordonnees = coords
 	def _est_valide(self, x:int=0, y:int=0, r:int=0) -> bool:
+		"""Retourne si la position de la pièce est valide ou non sur plateur
+
+		Args:
+			x (int, optional): Position en x. Defaults to 0.
+			y (int, optional): Position en y. Defaults to 0.
+			r (int, optional): Valeur de la rotation de la pièce. Defaults to 0.
+
+		Returns:
+			bool: _description_
+		"""
 		max_x, max_y = DIM_PLATEAU
 		if r == 0:
 			coordonnees = self.coordonnees
@@ -124,6 +175,8 @@ class Jeu:
 #		print("Position testée valide: x=%s, y=%s" % (x, y))
 		return True
 	def _poser_piece(self) -> None:
+		"""Pose la pièce sur le plateau ( position définitive )
+		"""
 		print("La pièce est posée")
 		if self.position[1] <= 0:
 			self.perdu = True
@@ -156,10 +209,15 @@ class Jeu:
 		# Travail avec la pièce courante terminé
 		self.current = None
 	def _first(self) -> None:
+		"""
+		Initialise les valeurs du jeux et de la première pièces
+		"""
 		self.plateau = [[0] * DIM_PLATEAU[0] for i in range(DIM_PLATEAU[1])]
 		self.score, self.pieces, self.lignes, self.tetris, self.niveau = SCORE_START, 0, 0, 0, NIVEAU
 		self.current, self.next, self.perdu = None, self._get_piece(), False
 	def _next(self) -> None:
+		"""Passe a la pièce suivante
+		"""
 		print("Piece suivante")
 		self.current, self.next = self.next, self._get_piece()
 		self.pieces += 1
@@ -167,6 +225,8 @@ class Jeu:
 		self._calculer_donnees_piece_courante()
 		self.dernier_mouvement = self.derniere_chute = time.time()
 	def _gerer_evenements(self) -> None:
+		"""Gère les évènements en fonction de l'entrée du joueur
+		"""
 		event = self._get_event()
 		if event == KEY_PAUSE:
 			print("Pause")
@@ -201,6 +261,8 @@ class Jeu:
 			self.position[1] += a-1
 		self._calculer_donnees_piece_courante()
 	def _gerer_gravite(self) -> None:
+		"""Gère la gravité et permet a une pièce de changer sa position vers le bas si elle peut encore déscendre
+		"""
 		if time.time() - self.derniere_chute > GRAVITE:
 			self.derniere_chute = time.time()
 			if not self._est_valide():
@@ -216,6 +278,8 @@ class Jeu:
 				self.position[1] += 1
 				self._calculer_donnees_piece_courante()
 	def _dessiner_plateau(self) -> None:
+		"""Dessine le plateur de jeu
+		"""
 		self.surface.fill(COULEURS.get(0))
 		pygame.draw.rect(self.surface, COULEURS[8], START_PLABORD+TAILLE_PLABORD, BORDURE_PLATEAU)
 		for i, ligne in enumerate(self.plateau):
@@ -238,6 +302,8 @@ class Jeu:
 
 		self._rendre()
 	def play(self) -> None:
+		"""Gère le jeu tant que la partie n'est pas perdu (les évènements, la gravité)
+		"""
 		print("Jouer")
 		self.surface.fill(COULEURS.get(0))
 		self._first()
